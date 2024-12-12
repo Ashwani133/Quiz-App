@@ -3,7 +3,9 @@ const userRouter = Router();
 import { z } from "zod";
 import bcrypt from "bcrypt";
 import { userModel } from "../models/db.js";
-
+import jwt from "jsonwebtoken";
+import { JWT_USER_PASSWORD } from "../config.js";
+// <-- User Signup Api -->
 userRouter.post("/signup", async function (req, res) {
   const { email, username, password } = req.body;
 
@@ -65,6 +67,74 @@ userRouter.post("/signup", async function (req, res) {
         message: "An internal error occured. Please try again later.",
       });
     }
+  }
+});
+
+// <-- User Signin Api -->
+userRouter.post("/signin", async function (req, res) {
+  const { email, password } = req.body;
+  const userSigninSchema = z.object({
+    email: z.string().max(100).email(),
+    password: z
+      .string()
+      .min(6)
+      .max(100)
+      .regex(/[a-z]/, {
+        message: "Password must contain at least one lowercase letter",
+      })
+      .regex(/[A-Z]/, {
+        message: "Password must contain at least one uppercase letter",
+      })
+      .regex(/\d/, { message: "Password must contain at least one number" })
+      .regex(/[@$!%*?&]/, {
+        message:
+          "Password must contain at least one special character (@, $, !, %, *, ?, &)",
+      }),
+  });
+
+  const userSigninParsedData = userSigninSchema.safeParse({
+    email: email,
+    password: password,
+  });
+
+  if (!userSigninParsedData.success) {
+    res.status(400).json({
+      message: "Invalid credentials!",
+    });
+    return;
+  }
+
+  try {
+    const response = await userModel.findOne({ email: email });
+    if (!response) {
+      res.status(403).json({
+        message: "User does not exist",
+      });
+      return;
+    }
+
+    const passwordMatched = await bcrypt.compare(password, response.password);
+    if (passwordMatched) {
+      const token = jwt.sign(
+        {
+          id: response._id,
+        },
+        JWT_USER_PASSWORD
+      );
+
+      res.status(200).json({
+        token: token,
+      });
+    } else {
+      res.status(403).json({
+        message: "Invalid credentials!",
+      });
+    }
+  } catch (e) {
+    res.status(500).json({
+      message: "An internal error occured. Please try again later!",
+      error: e.error,
+    });
   }
 });
 
