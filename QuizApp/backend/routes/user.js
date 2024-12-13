@@ -6,6 +6,7 @@ import { userModel } from "../models/db.js";
 import jwt from "jsonwebtoken";
 import { JWT_USER_PASSWORD } from "../config.js";
 import "dotenv/config";
+import { usermiddleware } from "../middlewares/user.js";
 
 // <-- User Signup Api -->
 userRouter.post("/signup", async function (req, res) {

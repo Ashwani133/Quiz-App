@@ -1,9 +1,10 @@
 import { Router } from "express";
 const adminRouter = Router();
 import { z } from "zod";
-import { adminModel } from "../models/db";
+import { adminModel } from "../models/db.js";
 import bcrypt from "bcrypt";
-import { JWT_ADMIN_PASSWORD } from "../config";
+import { JWT_ADMIN_PASSWORD } from "../config.js";
+import jwt from "jsonwebtoken";
 
 adminRouter.post("/signup", async function (req, res) {
   const { email, username, password } = req.body;
@@ -32,6 +33,7 @@ adminRouter.post("/signup", async function (req, res) {
     username: username,
     password: password,
   });
+
   if (!parsedAdminData.success) {
     res.status(400).json({
       message: "please enter valid details",
@@ -41,7 +43,7 @@ adminRouter.post("/signup", async function (req, res) {
   }
 
   try {
-    const hashedPassword = await bcrypt.hash(password, JWT_ADMIN_PASSWORD);
+    const hashedPassword = await bcrypt.hash(password, 10);
     await adminModel.create({
       email: email,
       username: username,
@@ -116,6 +118,7 @@ adminRouter.post("/signin", async function (req, res) {
         },
         JWT_ADMIN_PASSWORD
       );
+
       res.status(200).json({
         token: token,
       });
@@ -131,3 +134,5 @@ adminRouter.post("/signin", async function (req, res) {
     });
   }
 });
+
+export { adminRouter };

@@ -1,7 +1,8 @@
 import { Router } from "express";
 const quizRouter = Router();
 import { z } from "zod";
-import { quizModel } from "../models/db";
+import { quizModel } from "../models/db.js";
+import { AdminMiddleware } from "../middlewares/admin.js";
 
 quizRouter.post("/quiz", AdminMiddleware, async function (req, res) {
   const { title, description, createdBy, questions, createdAt } = req.body;
