@@ -5,6 +5,7 @@ dotenv.config();
 import { userRouter } from "./routes/user.js";
 import { quizRouter } from "./routes/quiz.js";
 import { adminRouter } from "./routes/admin.js";
+import { answerRouter } from "./routes/answer.js";
 
 const app = express();
 app.use(express.json());
@@ -12,6 +13,7 @@ app.use(express.json());
 app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/quiz", quizRouter);
+app.use("/api/v1/user/quiz", answerRouter);
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URL);

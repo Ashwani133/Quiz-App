@@ -36,7 +36,7 @@ const answerSchema = new Schema({
   answers: [
     {
       questionId: { type: ObjectId, required: true },
-      selectedoption: { type: String, required: true },
+      selectedOption: { type: String, required: true },
     },
   ],
   submittedAt: { type: Date, default: Date.now },

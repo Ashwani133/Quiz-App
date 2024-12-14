@@ -16,7 +16,7 @@ quizRouter.post("/", AdminMiddleware, async function (req, res) {
         z.object({
           questionText: z.string().min(3), // Each question must have a `questionText`
           options: z.array(z.string()).min(2).max(6), // Options must be an array of strings (2-6 items)
-          correctAnswer: z.string(), // Correct answer must be a string
+          selectedAnswer: z.string(), // Correct answer must be a string
         })
       )
       .min(1),
