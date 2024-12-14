@@ -4,15 +4,22 @@ import { z } from "zod";
 import { quizModel } from "../models/db.js";
 import { AdminMiddleware } from "../middlewares/admin.js";
 
-quizRouter.post("/quiz", AdminMiddleware, async function (req, res) {
+quizRouter.post("/", AdminMiddleware, async function (req, res) {
   const { title, description, createdBy, questions, createdAt } = req.body;
 
   const quizSchema = z.object({
     title: z.string().min(3).max(100),
     description: z.string().min(3).max(100),
     createdBy: z.string().min(3).max(100),
-    questions: z.string().array().min(1),
-    createdAt: z.date(),
+    questions: z
+      .array(
+        z.object({
+          questionText: z.string().min(3), // Each question must have a `questionText`
+          options: z.array(z.string()).min(2).max(6), // Options must be an array of strings (2-6 items)
+          correctAnswer: z.string(), // Correct answer must be a string
+        })
+      )
+      .min(1),
   });
 
   const parsedData = quizSchema.safeParse({
@@ -26,8 +33,10 @@ quizRouter.post("/quiz", AdminMiddleware, async function (req, res) {
   if (!parsedData.success) {
     res.status(400).json({
       message: "Invalid data!",
-      error: parsedUserData.error.issues[0].message,
+      error: parsedData.error.issues[0].message,
+      path: parsedData.error.issues[0].path[0],
     });
+    console.log(parsedData.error);
     return;
   }
 

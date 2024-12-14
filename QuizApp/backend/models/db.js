@@ -22,7 +22,6 @@ const quizSchema = new Schema({
   createdBy: { type: ObjectId, ref: "Admin", required: true },
   questions: [
     {
-      _id: { type: ObjectId, auto: true },
       questionText: { type: String, required: true },
       options: [{ type: String, required: true }],
       correctAnswer: { type: String, required: true },

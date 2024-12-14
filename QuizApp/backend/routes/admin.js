@@ -103,13 +103,14 @@ adminRouter.post("/signin", async function (req, res) {
   }
   try {
     const response = await adminModel.findOne({ email: email });
+
     if (!response) {
       res.status(403).json({
         message: "Admin does not exist",
       });
       return;
     }
-
+    console.log(JWT_ADMIN_PASSWORD);
     const passwordMatched = await bcrypt.compare(password, response.password);
     if (passwordMatched) {
       const token = jwt.sign(
@@ -118,7 +119,6 @@ adminRouter.post("/signin", async function (req, res) {
         },
         JWT_ADMIN_PASSWORD
       );
-
       res.status(200).json({
         token: token,
       });
