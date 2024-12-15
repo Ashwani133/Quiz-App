@@ -6,7 +6,7 @@ import { userRouter } from "./routes/user.js";
 import { quizRouter } from "./routes/quiz.js";
 import { adminRouter } from "./routes/admin.js";
 import { answerRouter } from "./routes/answer.js";
-
+import { resultRouter } from "./routes/result.js";
 const app = express();
 app.use(express.json());
 
@@ -14,6 +14,7 @@ app.use("/api/v1/user", userRouter);
 app.use("/api/v1/admin", adminRouter);
 app.use("/api/v1/quiz", quizRouter);
 app.use("/api/v1/user/quiz", answerRouter);
+app.use("/api/v1/user/quiz", resultRouter);
 
 async function main() {
   await mongoose.connect(process.env.MONGO_URL);
