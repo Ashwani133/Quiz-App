@@ -8,6 +8,9 @@ import { adminRouter } from "./routes/admin.js";
 import { answerRouter } from "./routes/answer.js";
 import { resultRouter } from "./routes/result.js";
 const app = express();
+import cors from "cors";
+const corsoption = { origin: ["http://localhost:5173"] };
+app.use(cors(corsoption));
 app.use(express.json());
 
 app.use("/api/v1/user", userRouter);
