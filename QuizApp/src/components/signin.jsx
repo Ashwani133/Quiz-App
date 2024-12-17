@@ -1,3 +1,4 @@
+import axios from "axios"
 import { useState } from "react"
 
 export const Signin = ()=>{
@@ -15,8 +16,18 @@ export const Signin = ()=>{
     })
     }
 
-    const handleClickSignin = async()=>{
-
+    const handleClickSignin = async(e)=>{
+        e.preventDefault();
+        try{
+            const response = await axios.post("http://localhost:4000/api/v1/user/signin",{
+                email:values.email,
+                password:values.password
+            })
+            console.log("you are signed in!",response)
+            localStorage.setItem("token",response.data.token)
+        }catch(e){
+            console.log(e)
+        }
     }
 
     return <form>

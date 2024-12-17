@@ -2,7 +2,7 @@ import { Router } from "express";
 const userRouter = Router();
 import { z } from "zod";
 import bcrypt from "bcrypt";
-import { userModel } from "../models/db.js";
+import { userModel, quizModel } from "../models/db.js";
 import jwt from "jsonwebtoken";
 import { JWT_USER_PASSWORD } from "../config.js";
 import "dotenv/config";
@@ -135,6 +135,22 @@ userRouter.post("/signin", async function (req, res) {
     res.status(500).json({
       message: "An internal error occured. Please try again later!",
       error: e.error,
+    });
+  }
+});
+
+userRouter.get("/quizzes", usermiddleware, async (req, res) => {
+  try {
+    const data = await quizModel.find();
+    console.log(data);
+    console.log(
+      "-------------------------------------------------------------------------"
+    );
+    res.status(200).json(data);
+  } catch (e) {
+    res.status(500).json({
+      message: "Error fetching users",
+      error: e.message,
     });
   }
 });
